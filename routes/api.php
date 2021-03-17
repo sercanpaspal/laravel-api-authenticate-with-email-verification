@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login'])->middleware('login.if.email.verified');
+    Route::post('login', [AuthController::class, 'login']);
     Route::put('update', [AuthController::class, 'update'])->middleware(['auth:api', 'verified']);
 });
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');

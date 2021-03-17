@@ -28,6 +28,8 @@ class AuthController extends Controller
     {
         if (!$token = auth()->attempt($request->validated())) {
             return response(['message' => 'Unauthorized Attempt'], 401);
+        }else if(!auth()->user()->hasVerifiedEmail()){
+            return response(['message' => 'Your email address is not verified.'], 403);
         }
 
         return response(['user' => UserResource::make(auth()->user()), 'access_token' => $token]);
