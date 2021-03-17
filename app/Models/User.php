@@ -42,14 +42,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public static function boot()
+    
+    public function setPasswordAttribute($value)
     {
-        parent::boot();
-
-        static::creating(function ($instance) {
-            $instance->password = Hash::make($instance->password);
-        });
+        $this->attributes['password'] = Hash::make($value);
     }
 
     public function getJWTIdentifier()
