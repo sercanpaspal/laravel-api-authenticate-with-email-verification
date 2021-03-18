@@ -14,20 +14,15 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        $user = User::create($request->validated());
+        event(new Registered(User::create($request->validated())));
 
-        event(new Registered($user));
-
-        return [
-            'user' => UserResource::make($user),
-            'access_token' => auth()->attempt(request(['email', 'password'])),
-        ];
+        return response(['message' => 'Account created.'], 201);
     }
 
     public function login(LoginRequest $request)
     {
         if (!$token = auth()->attempt($request->validated())) {
-            return response(['message' => 'Unauthorized Attempt'], 401);
+            return response(['message' => 'Unauthenticated.'], 401);
         }else if(!auth()->user()->hasVerifiedEmail()){
             return response(['message' => 'Your email address is not verified.'], 403);
         }
@@ -39,7 +34,7 @@ class AuthController extends Controller
     {
         User::find($request->id)->markEmailAsVerified();
 
-        return response(['message' => 'Verified!']);
+        return response(['message' => 'Account verified.']);
     }
 
     public function update(UserUpdateRequest $request)
