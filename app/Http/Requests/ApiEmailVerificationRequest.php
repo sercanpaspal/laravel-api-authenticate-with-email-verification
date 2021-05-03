@@ -14,6 +14,10 @@ class ApiEmailVerificationRequest extends FormRequest
      */
     public function authorize()
     {
+        if (!$this->hasValidSignature()) {
+            return false;
+        }
+
         $user = User::find($this->route('id'));
 
         if (!$user || ! hash_equals((string) $this->route('id'),
@@ -23,10 +27,6 @@ class ApiEmailVerificationRequest extends FormRequest
 
         if (! hash_equals((string) $this->route('hash'),
                           sha1($user->getEmailForVerification()))) {
-            return false;
-        }
-
-        if (!$this->hasValidSignature()) {
             return false;
         }
 
